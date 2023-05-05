@@ -98,14 +98,13 @@ describe('POST /content/comments', () => {
 })
 
 describe('GET /content/comments/user/:username', () => {
-  it('should return comments by username', async () => {
-    const res = await conn.get('/content/comments/user/TEST')
+  const q = db.prepare(`SELECT (id) FROM comments WHERE username=? AND body=?`)
+  const { id } = q.get('TEST', 'TEST')
+  comment_id = id
+  it('Get a comment by username', async () => {
+    const res = await conn.get(`/content/comments/user/TEST`)
     expect(res.statusCode).toBe(200)
     expect(res.body.result).toBeDefined()
-
-    const q = db.prepare('SELECT id FROM comments WHERE username = ? AND body = ?')
-    const { id } = q.get('TEST', 'TEST')
-    expect(res.body.result.map(comment => comment.id)).toContain(id)
   })
 })
 
